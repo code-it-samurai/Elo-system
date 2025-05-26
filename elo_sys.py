@@ -1,9 +1,17 @@
+# Elo Ranking system
+# Currently supporting 2 player matches
 class EloSys:
     def __init__(self, player1_rating, player2_rating):
+        # current rating of each player
         self.player1_rating = player1_rating
         self.player2_rating = player2_rating
+
+        # expected rating of each player depending on their current rating and scaling factor
         self.player1_win_expectancy = 0
         self.player2_win_expectancy = 0
+
+        # used to calibrate the sensitivity of the rating system, higher the number -> drastic the changes to elo post match
+        self.scaling_factor = 400
 
     def calculate_expected(self):
         print("player1 rating", self.player1_rating)
