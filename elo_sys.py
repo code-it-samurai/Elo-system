@@ -10,37 +10,21 @@ class EloSys:
         self.player1_score = player1_score
         self.player2_score = player2_score
 
-        # expected rating of each player depending on their current rating and scaling factor
-        self.player1_win_expectancy = 0
-        self.player2_win_expectancy = 0
-
         # used to calibrate the sensitivity of the rating system, higher the number -> drastic the changes to elo post match
         self.scaling_factor = 400
         self.k_factor = 32  # recommended default value
 
-    def calculate_expected(self):
-        rating_difference_player1 = self.player2_rating - self.player1_rating
-        rating_difference_player2 = self.player1_rating - self.player2_rating
+    def rating_difference(self, rating1, rating2):
+        return rating1 - rating2
 
-        self.player1_win_expectancy = self.win_expectancy_calculator(
-            rating_difference_player1
-        )[0]
-        self.player2_win_expectancy = self.win_expectancy_calculator(
-            rating_difference_player2
-        )[0]
-
-        print(self.player1_win_expectancy, self.player1_rating)
-        print(self.player2_win_expectancy, self.player2_rating)
-
-    def new_ratings_calculator(self, score, win_expectancy):
-        new_rating = self.player1_rating + self.k_factor * (score - win_expectancy)
-        return new_rating
-
-    def win_expectancy_calculator(self, rating_difference):
+    def win_expectancy(self, rating_difference):
         win_expectancy_raw = 1 / (1 + 10 ** ((rating_difference) / self.scaling_factor))
         win_expectancy_in_percentage = (win_expectancy_raw / 1) * 100
-        return [win_expectancy_in_percentage, win_expectancy_raw]
+        return {win_expectancy_in_percentage, win_expectancy_raw}
+
+    def new_rating(self, old_rating, score, win_expectancy):
+        new_rating = old_rating + self.k_factor * (score - win_expectancy)
+        return new_rating
 
 
 elo = EloSys(1600, 100, 0, 1)
-elo.calculate_expected()
